@@ -1,0 +1,48 @@
+<html>
+
+<head>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" th:href="@{/css/main.css}"/>
+</head>
+<body>
+
+
+<a th:href="@{/provider/add}" class="btn btn-danger">Cliquer Pour Ajouter Un Provider</a>
+<h1 align="center">List Des Fournisseurs</h1>
+<h3 th:text="${pr}"></h3>
+<ul>
+  <li th:each="p :${providers}" th:text="${p}"></li>
+ 
+
+</ul>
+ <table align="center" border="1" class="table">
+     <tr>
+         <th>Name</th><th>Adress</th><th>Email</th>
+     </tr>
+     <tr th:each="obj:${objs}">
+     <td th:text="${obj.name}"></td>
+     <td th:text="${obj.adress}"></td>
+     <td th:text="${obj.email}"></td>
+     
+     </tr>
+ 
+ 
+ 
+ </table>
+      
+
+
+
+
+
+</body>
+
+
+
+
+
+
+
+
+</html>
+
