@@ -1,7 +1,11 @@
 package com.SIP.ams.entities;
 
 public class Provider {
-  private String name;
+  @Override
+	public String toString() {
+		return "Provider [name=" + name + ", adress=" + adress + ", email=" + email + "]";
+	}
+private String name;
   private String adress;
   public String getName() {
 	return name;
@@ -12,7 +16,7 @@ public void setName(String name) {
 public Provider(String name, String adress, String email) {
 	super();
 	this.name = name;
-	this.adress = adress;
+	this.adress = adress; 
 	this.email = email;
 }
 public Provider() {
