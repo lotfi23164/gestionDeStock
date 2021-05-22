@@ -1,73 +1,107 @@
 package com.SIP.ams.Controllers;
 
 
-import java.util.ArrayList; 
 
+import javax.validation.Valid; 
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-
 import org.springframework.web.bind.annotation.RequestMapping;
-//import org.springframework.web.bind.annotation.ResponseBody;
-
 
 import com.SIP.ams.entities.Provider;
-@RequestMapping("/provider")
+import com.SIP.ams.repositories.ProviderRepository;
+
+import java.util.List;
+
+
+
+
+
 @Controller
+@RequestMapping("/provider/")
+
 public class ProviderController {
-	static ArrayList<Provider>objs = new ArrayList<>();   //objet globale
-	static {
-		objs.add(new Provider("HP","usa","hp@gmail.com"));
-		objs.add(new Provider("Toshiba","Korea","toshiba@gmail.com"));
-		objs.add(new Provider("Dell","usa","dell@gmail.com"));
+	private final ProviderRepository providerRepository;
+
+	@Autowired
+	public ProviderController(ProviderRepository providerRepository) {
+		this.providerRepository = providerRepository;
+	}
+
+	@GetMapping("list")
+    //@ResponseBody
+    public String listProviders(Model model) {
+		List<Provider> ls = (List<Provider>) providerRepository.findAll();
+		if(ls.isEmpty());
+		    ls = null;
+    	
+        model.addAttribute("providers", ls);
+        
+        return "provider/listProviders";
 	}
 	
-	@RequestMapping("/List")  
-	//@ResponseBody  //c le path
-	public String providerList(Model m)  //method providerList
-	{
-		
-		ArrayList<String>providers = new ArrayList<>();
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		m.addAttribute("providers", providers);
-		
-		m.addAttribute("objs",objs);
-		
-		
-		return "provider/listProviders"; //on place le nom de la vue
-	   }
-
-   
-
-	@GetMapping("add") 
-	
-    public String addProviderGet(Model m) 
+    @GetMapping("add")
+    public String showAddProviderForm(Model model) {
+    	Provider provider = new Provider();// object dont la valeur des attributs par defaut
+    	model.addAttribute("provider", provider);
+        return "provider/addProvider";
+    }
     
-    {
-		m.addAttribute("provider", new Provider());
-	 return "provider/addProvider";
+    @PostMapping("add")
+    public String addProvider(@Valid Provider provider, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "provider/addProvider";
+        }
+        providerRepository.save(provider);
+        return "redirect:list";
     }
-	@PostMapping("add") 
-	//@ResponseBody
-    public String addProviderPost( Provider provider )
-    		
-    		 
-    {
-		//ici on va ajouter un nouveau provider dans la liste
-		System.out.println(provider);
-		objs.add(provider);
-	 return "redirect:List";
+
+    
+    @GetMapping("delete/{id}")
+    public String deleteProvider(@PathVariable("id") long id, Model model) {
+    	Provider provider = providerRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("Invalid provider Id:" + id));
+            
+            System.out.println("suite du programme...");
+            
+            providerRepository.delete(provider);
+            
+            /*model.addAttribute("providers", providerRepository.findAll());
+            return "provider/listProviders";*/
+            return "redirect:../list";
+        }
+    @GetMapping("edit/{id}")
+    public String showProviderFormToUpdate(@PathVariable("id") long id, Model model) {
+        Provider provider = providerRepository.findById(id).orElseThrow(()->new IllegalArgumentException("Invalid provider Id:" + id));
+        
+        model.addAttribute("provider", provider);
+        
+        return "provider/updateProvider";
+    }
+
+    @PostMapping("update")
+    public String updateProvider(@Valid Provider provider, BindingResult result, Model model) {
+    	 if (result.hasErrors()) {
+    		 model.addAttribute("provider", provider);
+             return "provider/updateProvider";
+         }
+    	
+    	
+    	providerRepository.save(provider);
+    	return"redirect:list";
+    	
     }
 
 
-}  
-   
+
+    	
+    }
+
+        
+
+
+
